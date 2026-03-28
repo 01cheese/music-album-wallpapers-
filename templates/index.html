@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="icon" href="favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="favicon-32x32.png" sizes="32x32" type="image/png">
+
+
+<title>WALLMAKER — Album Art Wallpapers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo">WALL<span>MAKER</span></div>
+  </div>
+  <div class="header-right">
+    <div class="mode-toggle" id="header-mode-toggle">
+      <button class="mode-btn active" id="mode-single" onclick="setMode('single')">SINGLE</button>
+      <button class="mode-btn" id="mode-collage" onclick="setMode('collage')">COLLAGE</button>
+    </div>
+  </div>
+</header>
+
+<div class="steps-bar">
+  <div class="step-tab active" id="tab-1"><span class="tab-num">01</span><span class="tab-label">ARTIST</span></div>
+  <div class="step-tab" id="tab-2"><span class="tab-num">02</span><span class="tab-label">ALBUM</span></div>
+  <div class="step-tab" id="tab-3"><span class="tab-num">03</span><span class="tab-label">GENERATE</span></div>
+</div>
+
+<main>
+
+  <!-- ─── STEP 1: ARTIST SEARCH ─── -->
+  <div class="section active" id="step-1">
+    <div class="section-title">FIND ARTIST</div>
+    <div class="section-sub">Type to search — results appear instantly</div>
+
+    <div class="search-row">
+      <div class="search-wrap">
+        <input class="search-input" id="artist-input" type="text"
+               placeholder="Radiohead, Kendrick Lamar, Björk…"
+               autocomplete="off" autocorrect="off" spellcheck="false">
+        <div class="search-clear" id="search-clear" onclick="clearSearch()">✕</div>
+      </div>
+      <button class="btn btn-ghost" onclick="randomArtist()">
+        <svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M14 4l2 2-2 2M6 6h10M6 14h10M14 12l2 2-2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        RANDOM
+      </button>
+    </div>
+
+    <div class="quick-artists" id="quick-artists"></div>
+    <div id="artist-results"></div>
+  </div>
+
+  <!-- ─── STEP 2: ALBUM SELECTION ─── -->
+  <div class="section" id="step-2">
+    <button class="back-btn" onclick="goStep(1)">
+      <svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M12 4L6 10l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      BACK
+    </button>
+
+    <div class="albums-header">
+      <div class="albums-header-left">
+        <div class="albums-header-label">ARTIST</div>
+        <div class="selected-artist-name" id="artist-display-name">—</div>
+      </div>
+      <div class="albums-actions">
+        <div class="collage-counter" id="collage-counter" style="display:none">
+          <span id="collage-count">0</span> selected
+        </div>
+        <button class="btn btn-ghost" onclick="shuffleAlbum()">
+          <svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M14 4l2 2-2 2M6 6h10M6 14h10M14 12l2 2-2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          RANDOM
+        </button>
+        <button class="btn btn-ghost" id="btn-select-all" onclick="toggleSelectAll()" style="display:none">SELECT ALL</button>
+        <button class="btn" id="btn-proceed" onclick="proceed()" disabled>NEXT →</button>
+      </div>
+    </div>
+
+    <div class="collage-hint" id="collage-hint" style="display:none">
+      Select 2–9 albums for your collage
+    </div>
+
+    <div class="albums-grid" id="albums-grid"></div>
+  </div>
+
+  <!-- ─── STEP 3: GENERATE ─── -->
+  <div class="section" id="step-3">
+    <button class="back-btn" onclick="goStep(2)">
+      <svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M12 4L6 10l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      BACK
+    </button>
+
+    <div class="gen-layout">
+
+      <!-- LEFT: Options -->
+      <div class="gen-options">
+
+        <!-- MODE (step 3 inline) -->
+        <div class="option-block">
+          <div class="option-label">MODE</div>
+          <div class="mode-toggle" id="s3-mode-toggle">
+            <button class="mode-btn active" id="s3-mode-single" onclick="setModeStep3('single')">SINGLE</button>
+            <button class="mode-btn" id="s3-mode-collage" onclick="setModeStep3('collage')">COLLAGE</button>
+          </div>
+        </div>
+
+        <!-- RESOLUTION -->
+        <div class="option-block">
+          <div class="option-label">RESOLUTION</div>
+          <div class="res-tabs-bar">
+            <button class="res-tab active" id="rtab-desktop" onclick="switchResTab('desktop')">DESKTOP</button>
+            <button class="res-tab" id="rtab-phone" onclick="switchResTab('phone')">PHONE</button>
+            <button class="res-tab" id="rtab-custom" onclick="switchResTab('custom')">CUSTOM</button>
+          </div>
+          <div class="res-presets-wrap" id="res-presets"></div>
+          <div class="res-custom-wrap" id="res-custom" style="display:none">
+            <input type="number" id="custom-w" class="custom-res-input" placeholder="1920" min="400" max="7680">
+            <span class="custom-res-x">×</span>
+            <input type="number" id="custom-h" class="custom-res-input" placeholder="1080" min="400" max="7680">
+            <button class="btn btn-ghost btn-sm" onclick="applyCustomRes()">APPLY</button>
+          </div>
+          <div class="res-current-display" id="res-current">1920 × 1080</div>
+        </div>
+
+        <!-- LAYOUT STYLE -->
+        <div class="option-block">
+          <div class="option-label">STYLE</div>
+          <div class="style-row" id="style-row"></div>
+        </div>
+
+        <!-- COLORS -->
+        <div class="option-block">
+          <div class="option-label">COLORS</div>
+          <div class="color-pickers">
+            <div class="color-item">
+              <div class="color-label">BG</div>
+              <div class="color-swatch" id="swatch-bg" style="background:#0a0a0a">
+                <input type="color" id="color-bg" value="#0a0a0a" oninput="updateSwatch('bg')">
+              </div>
+            </div>
+            <div class="color-item">
+              <div class="color-label">TEXT</div>
+              <div class="color-swatch" id="swatch-text" style="background:#f0f0f0">
+                <input type="color" id="color-text" value="#f0f0f0" oninput="updateSwatch('text')">
+              </div>
+            </div>
+            <div class="color-item">
+              <div class="color-label">ACCENT</div>
+              <div class="color-swatch" id="swatch-accent" style="background:#e8ff3c">
+                <input type="color" id="color-accent" value="#e8ff3c" oninput="updateSwatch('accent')">
+              </div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="randomColors()">PALETTE</button>
+          </div>
+        </div>
+
+        <button class="btn btn-generate" id="generate-btn" onclick="generateWallpaper()">
+          GENERATE
+        </button>
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="gen-preview" id="gen-preview-col">
+        <div id="preview-placeholder" class="preview-placeholder">
+          <svg viewBox="0 0 64 64" fill="none" width="40" height="40"><rect x="4" y="8" width="56" height="48" rx="4" stroke="currentColor" stroke-width="2" opacity="0.3"/><path d="M4 44l14-14 10 10 10-14 16 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/></svg>
+          <p>Generating preview…</p>
+        </div>
+        <div id="preview-wrap" style="display:none">
+          <div id="preview-label">
+            <span id="preview-dim-label">—</span>
+            <span class="live-badge">LIVE</span>
+          </div>
+          <div id="preview-canvas-wrap">
+            <canvas id="preview-canvas"></canvas>
+          </div>
+          <div class="download-row">
+            <button class="btn" onclick="downloadWallpaper()">
+              <svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M10 2v10M6 8l4 4 4-4M3 16h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              DOWNLOAD PNG
+            </button>
+            <button class="btn btn-ghost" onclick="generateWallpaper()">
+              <svg viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M4 10a6 6 0 0 1 6-6 6 6 0 0 1 4.24 1.76L16 8M4 10l1.76-1.76A6 6 0 0 1 10 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              REGENERATE
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loading-text">LOADING…</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
